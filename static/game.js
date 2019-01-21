@@ -43,7 +43,10 @@ document.addEventListener('keyup', function(event) {
   }
 });
 
-socket.emit('new player');
+username = prompt("Enter your username");
+color = prompt("Enter your color")
+
+socket.emit('new player', username, color);
 setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
@@ -52,13 +55,19 @@ var canvas = document.getElementById('canvas');
 canvas.width = 800;
 canvas.height = 600;
 var context = canvas.getContext('2d');
+
 socket.on('state', function(players) {
   context.clearRect(0, 0, 800, 600);
-  context.fillStyle = 'green';
   for (var id in players) {
     var player = players[id];
+    context.fillStyle = player.color;
     context.beginPath();
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
     context.fill();
+
+    context.font = "16px Arial";
+    context.fillStyle = "black";
+    textWidth = context.measureText(player.username).width;
+    context.fillText(player.username, player.x - (textWidth / 2), player.y - 20);
   }
 });

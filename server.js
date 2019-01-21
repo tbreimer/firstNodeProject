@@ -17,21 +17,25 @@ server.listen(process.env.PORT || 5000, function() {
   console.log('Starting server on port 5000');
 });
 
-// Add the WebSocket handlers
-io.on('connection', function(socket) {
-});
-
+/*
 setInterval(function() {
   io.sockets.emit('message', 'hi!');
 }, 1000);
+*/
 
 var players = {};
+
 io.on('connection', function(socket) {
-  socket.on('new player', function() {
+  socket.on('new player', function(username, color) {
     players[socket.id] = {
       x: 300,
-      y: 300
+      y: 300,
+      username: username,
+      color: color
     };
+  });
+  socket.on('disconnect', function() {
+    delete players[socket.id];
   });
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
